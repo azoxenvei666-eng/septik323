@@ -5,34 +5,23 @@ function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const TELEGRAM_BOT_TOKEN = '8614602969:AAHWYtwuKObgB-zVMkr0DmG5GOVk-w-X98E'
-  const TELEGRAM_CHAT_ID = '7332528461'
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
-    const message = `
-🔔 Новая заявка с сайта Septik323!
-
-👤 Имя: ${formData.name}
-📞 Телефон: ${formData.phone}
-📦 Объём: ${formData.volume} м³
-    `.trim()
-
     try {
-      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      const response = await fetch('/api/sendTelegram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: message
-        })
+        body: JSON.stringify(formData)
       })
-      setSubmitted(true)
-      setFormData({ name: '', phone: '', volume: '4' })
+
+      if (response.ok) {
+        setSubmitted(true)
+        setFormData({ name: '', phone: '', volume: '4' })
+      }
     } catch (error) {
-      console.error('Ошибка отправки:', error)
+      console.error('Ошибка:', error)
     }
 
     setLoading(false)
